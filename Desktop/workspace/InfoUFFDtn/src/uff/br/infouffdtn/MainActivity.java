@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
 	
     private InfoService mService = null;
     private boolean mBound = false;
-    //Teste do git!!!!!
+    //Teste do git numero 2!!!!!!!!
     //private EditText mTextEid = null;
     //private TextView mResult = null;
     private TextView editText;
