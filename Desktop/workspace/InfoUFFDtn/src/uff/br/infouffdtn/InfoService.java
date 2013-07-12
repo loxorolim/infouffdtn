@@ -1,5 +1,7 @@
 package uff.br.infouffdtn;
 
+import java.util.List;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Binder;
@@ -15,6 +17,7 @@ import de.tubs.ibr.dtn.api.DTNClient;
 import de.tubs.ibr.dtn.api.DTNClient.Session;
 import de.tubs.ibr.dtn.api.DataHandler;
 import de.tubs.ibr.dtn.api.GroupEndpoint;
+import de.tubs.ibr.dtn.api.Node;
 import de.tubs.ibr.dtn.api.Registration;
 import de.tubs.ibr.dtn.api.ServiceNotAvailableException;
 import de.tubs.ibr.dtn.api.SessionConnection;
@@ -28,17 +31,17 @@ public class InfoService extends IntentService {
     private static final String TAG = "PingService";
     
     // mark a specific bundle as delivered
-    public static final String MARK_DELIVERED_INTENT = "de.tubs.ibr.dtn.example.MARK_DELIVERED";
+    public static final String MARK_DELIVERED_INTENT = "uff.br.infouffdtn.MARK_DELIVERED";
     
     // process a status report
-    public static final String REPORT_DELIVERED_INTENT = "de.tubs.ibr.dtn.example.REPORT_DELIVERED";
+    public static final String REPORT_DELIVERED_INTENT = "uff.br.infouffdtn.REPORT_DELIVERED";
     
     // this intent send out a PING message
-    public static final String PING_INTENT = "de.tubs.ibr.dtn.example.PING";
+    public static final String PING_INTENT = "uff.br.infouffdtn.PING";
 
     // indicates updated data to other components
-    public static final String DATA_UPDATED = "de.tubs.ibr.dtn.example.DATA_UPDATED";
-    
+    public static final String DATA_UPDATED = "uff.br.infouffdtn.DATA_UPDATED";
+    public static final String PAYLOAD_UPDATED = "uff.br.infouffdtn.PAYLOAD_UPDATED";
     // group EID of this app
     public static final GroupEndpoint PING_GROUP_EID = new GroupEndpoint("dtn://broadcast.dtn/ping");
     
@@ -49,7 +52,6 @@ public class InfoService extends IntentService {
     // The communication with the DTN service is done using the DTNClient
     private DTNClient mClient = null;
     
-    private String mPayload = "Inicial";
     // Hold the last ping result
     private Double mLastMeasurement = 0.0;
     
@@ -75,28 +77,29 @@ public class InfoService extends IntentService {
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
+    public GroupEndpoint getGroupEndpoint()
+    {
+    	return PING_GROUP_EID;
+    }
     
     public Double getLastMeasurement() {
         return mLastMeasurement;
     }
-    public String getPayload() {
-        return mPayload;
-    }
-    
+
     private String getLocalEndpoint() {
         try {
             if (mClient != null) {
                 if (mClient.getDTNService() == null) return null;
                 return mClient.getDTNService().getEndpoint();
-            }
+            } 
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         
         return null;
     }
-    
-    private void doPing(SingletonEndpoint destination) {
+   /*
+       private void doPing(SingletonEndpoint destination) {
         // create a new bundle
         Bundle b = new Bundle();
         
@@ -138,6 +141,63 @@ public class InfoService extends IntentService {
         } catch (InterruptedException e) {
             Log.e(TAG, "could not send the message", e);
         }
+    }
+    */
+    private void doPing(SingletonEndpoint destination) {
+        
+    	try
+    	{
+    		List<Node> neighbours = mClient.getDTNService().getNeighbors();
+    		
+    		SingletonEndpoint s = neighbours.get(0).endpoint;
+    		
+        	// create a new bundle
+            Bundle b = new Bundle();
+            
+            // set the destination of the bundle
+            b.setDestination(destination);
+            
+            // limit the lifetime of the bundle to 60 seconds
+            b.setLifetime(60L);
+            
+            // set status report requests for bundle reception
+            b.set(ProcFlags.REQUEST_REPORT_OF_BUNDLE_RECEPTION, true);
+            
+            // set destination for status reports
+            b.setReportto(SingletonEndpoint.ME);
+            
+            // generate some payload
+            String payload = "Hello World";
+
+            try {
+                // get the DTN session
+                Session s = mClient.getSession();
+                
+                // store the current time
+                mStart = System.nanoTime();
+                
+                // send the bundle
+                BundleID ret = s.send(b, payload.getBytes());
+                
+                if (ret == null)
+                {
+                    Log.e(TAG, "could not send the message");
+                }
+                else
+                {
+                    Log.d(TAG, "Bundle sent, BundleID: " + ret.toString());
+                }
+            } catch (SessionDestroyedException e) {
+                Log.e(TAG, "could not send the message", e);
+            } catch (InterruptedException e) {
+                Log.e(TAG, "could not send the message", e);
+            }
+    	}
+    	catch(Exception e)
+    	{
+    		
+    	}
+    	
     }
 
     @Override
@@ -189,7 +249,7 @@ public class InfoService extends IntentService {
         }
     }
     
-    
+   
     
     SessionConnection mSession = new SessionConnection() {
 
@@ -212,6 +272,13 @@ public class InfoService extends IntentService {
         }
         
     };
+    public void preparePayload(String payload)
+    {
+    	// notify other components of the updated EID
+        Intent i = new Intent(PAYLOAD_UPDATED);
+        i.putExtra("payload", payload);
+        sendBroadcast(i);
+    }
     
     @Override
     public void onCreate() {
@@ -320,7 +387,9 @@ public class InfoService extends IntentService {
             // payload is received here
         	try
         	{
-        		mPayload = new String(data, "UTF-8");
+        		String payload = new String(data, "UTF-8");
+        		preparePayload(payload);
+        		
         	}
         	catch(Exception e)
         	{
