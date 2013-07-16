@@ -114,7 +114,7 @@ public class MainActivity extends Activity {
         i.setAction(InfoService.PING_INTENT);
         
         //i.putExtra("destination", mTextEid.getText().toString());
-        i.putExtra("destination", "dtn://androidRolimTESTE/example-app");
+        i.putExtra("destination", "dtn://androidRolim/example-app");
         
         //i.putExtra("destination", "dtn://broadcast.dtn/ping/echo");
         
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
         i.setAction(InfoService.PING_INTENT);
         
         //i.putExtra("destination", mTextEid.getText().toString());
-        i.putExtra("destination", "dtn://androidRolimteste");
+        i.putExtra("destination", "dtn://androidRolim");
         startService(i);
     	}
     	catch(Exception e)
