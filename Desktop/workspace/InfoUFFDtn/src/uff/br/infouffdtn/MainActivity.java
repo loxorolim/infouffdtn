@@ -1,7 +1,7 @@
 package uff.br.infouffdtn;
 
 import de.tubs.ibr.dtn.api.GroupEndpoint;
-import de.tubs.ibr.dtn.ping.R;
+import uff.br.infouffdtn.R;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -114,9 +114,16 @@ public class MainActivity extends Activity {
         i.setAction(InfoService.PING_INTENT);
         
         //i.putExtra("destination", mTextEid.getText().toString());
-        i.putExtra("destination", "dtn://androidRolim/echo");
+        i.putExtra("destination", "dtn://androidRolimTESTE/example-app");
+        
         //i.putExtra("destination", "dtn://broadcast.dtn/ping/echo");
         
+        startService(i);
+         i = new Intent(this, InfoService.class);
+        i.setAction(InfoService.PING_INTENT);
+        
+        //i.putExtra("destination", mTextEid.getText().toString());
+        i.putExtra("destination", "dtn://androidRolimteste");
         startService(i);
     	}
     	catch(Exception e)

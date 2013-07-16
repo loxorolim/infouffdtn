@@ -28,7 +28,7 @@ import de.tubs.ibr.dtn.api.TransferMode;
 public class InfoService extends IntentService {
     
     // This TAG is used to identify this class (e.g. for debugging)
-    private static final String TAG = "PingService";
+    private static final String TAG = "InfoService";
     
     // mark a specific bundle as delivered
     public static final String MARK_DELIVERED_INTENT = "uff.br.infouffdtn.MARK_DELIVERED";
@@ -148,8 +148,7 @@ public class InfoService extends IntentService {
     	try
     	{
     		List<Node> neighbours = mClient.getDTNService().getNeighbors();
-    		
-    		SingletonEndpoint s = neighbours.get(0).endpoint;
+
     		
         	// create a new bundle
             Bundle b = new Bundle();
@@ -161,10 +160,10 @@ public class InfoService extends IntentService {
             b.setLifetime(60L);
             
             // set status report requests for bundle reception
-            b.set(ProcFlags.REQUEST_REPORT_OF_BUNDLE_RECEPTION, true);
+            //b.set(ProcFlags.REQUEST_REPORT_OF_BUNDLE_RECEPTION, true);
             
             // set destination for status reports
-            b.setReportto(SingletonEndpoint.ME);
+            //b.setReportto(SingletonEndpoint.ME);
             
             // generate some payload
             String payload = "Hello World";
@@ -210,7 +209,11 @@ public class InfoService extends IntentService {
             try {
                 // We loop here until no more bundles are available
                 // (queryNext() returns false)
-                while (mClient.getSession().queryNext());
+            	preparePayload("teste");
+                while (mClient.getSession().queryNext())
+                {
+                	String x = " ";
+                }
             } catch (SessionDestroyedException e) {
                 Log.e(TAG, "Can not query for bundle", e);
             } catch (InterruptedException e) {
