@@ -1,5 +1,8 @@
 package uff.br.infouffdtn;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import de.tubs.ibr.dtn.api.GroupEndpoint;
 import uff.br.infouffdtn.R;
 import android.app.Activity;
@@ -17,16 +20,20 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import uff.br.infouffdtn.db.*;
 
 public class MainActivity extends Activity {
 	
     private InfoService mService = null;
     private boolean mBound = false;
+    private ContentsDatabase mStorage = null;
 
     //Teste do git numero 3 agora é o pull!!!!!!!!
     //private EditText mTextEid = null;
     //private TextView mResult = null;
     private TextView editText;
+    private TextView editText2;
+    int n = 0;
 	
     /** Called when the activity is first created. */
     @Override
@@ -34,10 +41,11 @@ public class MainActivity extends Activity {
     	setTitle("Info UFF DTN");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main3);
-        
+        mStorage = new ContentsDatabase();
         //mTextEid = (EditText)findViewById(R.id.editEid);
         editText = (TextView) findViewById(R.id.textView1);
-
+        editText2 = (TextView) findViewById(R.id.textView2);
+        
         // assign an action to the ping button
         try
         {
@@ -46,6 +54,36 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 ping();
+            }
+        });
+        Button b2 = (Button)findViewById(R.id.button2);
+        b2.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+					save();
+				} 
+                catch (IOException e)
+                {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        });
+        Button b3 = (Button)findViewById(R.id.button3);
+        b3.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try 
+                {
+					ler();
+				} 
+                catch (FileNotFoundException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
         }
@@ -131,6 +169,15 @@ public class MainActivity extends Activity {
     		
     	}
    }
+    private void save() throws IOException
+    {
+    	n++;
+    	mStorage.writeTest("arquivo","Testando"+String.valueOf(n),this);
+    }
+    private void ler() throws FileNotFoundException 
+    {
+    	editText2.setText(mStorage.readTest("arquivo",this));
+    }
     
     private void updateResult() {
         runOnUiThread(new Runnable() {
