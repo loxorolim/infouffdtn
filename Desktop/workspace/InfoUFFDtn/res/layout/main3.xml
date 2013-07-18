@@ -51,6 +51,15 @@
         android:layout_alignRight="@+id/button2"
         android:layout_below="@+id/button2"
         android:layout_marginTop="21dp"
-        android:text="Ler" />
+        android:text="DeletarTudo" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_toLeftOf="@+id/textView2"
+        android:text="Display Contents" />
 
 </RelativeLayout>

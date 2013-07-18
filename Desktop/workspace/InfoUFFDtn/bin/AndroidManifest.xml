@@ -26,6 +26,7 @@
        			<category android:name="android.intent.category.DEFAULT" />
     </intent-filter>
         </activity>
+        <activity android:name=".DisplayActivity"></activity>
         
         <service android:name="uff.br.infouffdtn.InfoService" />
         

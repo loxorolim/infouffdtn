@@ -2,6 +2,7 @@ package uff.br.infouffdtn;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import de.tubs.ibr.dtn.api.GroupEndpoint;
 import uff.br.infouffdtn.R;
@@ -22,18 +23,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import uff.br.infouffdtn.db.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity
+{
 	
     private InfoService mService = null;
     private boolean mBound = false;
-    private ContentsDatabase mStorage = null;
 
     //Teste do git numero 3 agora é o pull!!!!!!!!
     //private EditText mTextEid = null;
     //private TextView mResult = null;
+    int n = 0;
     private TextView editText;
     private TextView editText2;
-    int n = 0;
 	
     /** Called when the activity is first created. */
     @Override
@@ -41,7 +42,6 @@ public class MainActivity extends Activity {
     	setTitle("Info UFF DTN");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main3);
-        mStorage = new ContentsDatabase();
         //mTextEid = (EditText)findViewById(R.id.editEid);
         editText = (TextView) findViewById(R.id.textView1);
         editText2 = (TextView) findViewById(R.id.textView2);
@@ -74,7 +74,8 @@ public class MainActivity extends Activity {
         Button b3 = (Button)findViewById(R.id.button3);
         b3.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) 
+            {
                 try 
                 {
 					ler();
@@ -84,6 +85,15 @@ public class MainActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+            }
+        });
+        Button b4 = (Button)findViewById(R.id.button4);
+        b4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) 
+            {
+                	Intent intent = new Intent(MainActivity.this, DisplayActivity.class);
+                	startActivity(intent);         
             }
         });
         }
@@ -171,12 +181,17 @@ public class MainActivity extends Activity {
    }
     private void save() throws IOException
     {
-    	n++;
-    	mStorage.writeTest("arquivo","Testando"+String.valueOf(n),this);
+    	Date d = new Date();
+    	Content teste = new Content("Arquivo "+ String.valueOf(n++),"Mensagem 1",d);
+    	Content teste2 = new Content("Arquivo" + String.valueOf(n++),"Mensagem 2",d);
+    	Content teste3 = new Content("Arquivo"+ String.valueOf(n++),"Mensagem 3",d);
+    	ContentsDatabase.writeTest(teste,this);
+    	ContentsDatabase.writeTest(teste2,this);
+    	ContentsDatabase.writeTest(teste3,this);
     }
     private void ler() throws FileNotFoundException 
     {
-    	editText2.setText(mStorage.readTest("arquivo",this));
+    	ContentsDatabase.deleteAllArchives(this);
     }
     
     private void updateResult() {
