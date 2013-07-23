@@ -20,7 +20,7 @@ import android.content.Context;
 public class ContentsDatabase
 {
     private static boolean[] avaiableArchivesNumbers = new boolean[30];
-	
+	//PRECISA SALVAR ESTE VETOR EM UM ARQUIVO PARA NAO PERDER OS DADOS QUANDO RESETAR O CELULAR!!!!!!!
 	public static void writeTest(Content content,Context ctx) throws IOException
 	{
 		 try 
