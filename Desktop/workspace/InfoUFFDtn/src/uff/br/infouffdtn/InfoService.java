@@ -1,6 +1,9 @@
 package uff.br.infouffdtn;
 
+import java.util.Date;
 import java.util.List;
+
+import uff.br.infouffdtn.db.Content;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -143,59 +146,73 @@ public class InfoService extends IntentService {
         }
     }
     */
-    private void doPing(SingletonEndpoint destination) {
+    private void doPing() {
         
+    	//criando um content teste
+    	Date d = new Date();
+    	Content content = new Content("A", d, "Olá, estou enviando um content dentro do payload!");
     	try
     	{
+    		System.out.print(content.toString());
     		List<Node> neighbours = mClient.getDTNService().getNeighbors();
-
-    		
-        	// create a new bundle
-            Bundle b = new Bundle();
-            
-            // set the destination of the bundle
-            b.setDestination(destination);
-            
-            // limit the lifetime of the bundle to 60 seconds
-            b.setLifetime(60L);
-            
-            // set status report requests for bundle reception
-            //b.set(ProcFlags.REQUEST_REPORT_OF_BUNDLE_RECEPTION, true);
-            
-            // set destination for status reports
-            //b.setReportto(SingletonEndpoint.ME);
-            
-            // generate some payload
-            String payload = "Hello World";
-
-            try {
-                // get the DTN session
-                Session s = mClient.getSession();
+    		for(int i = 0; i< neighbours.size();i++)
+    		{
+    			String destAddress = neighbours.get(i).endpoint.toString() + "/example-app";
+    			SingletonEndpoint destination = new SingletonEndpoint(destAddress);
+        		
+            	// create a new bundle
+                Bundle b = new Bundle();
                 
-                // store the current time
-                mStart = System.nanoTime();
+                // set the destination of the bundle
+                b.setDestination(destination);
                 
-                // send the bundle
-                BundleID ret = s.send(b, payload.getBytes());
+                // limit the lifetime of the bundle to 60 seconds
+                b.setLifetime(60L);
                 
-                if (ret == null)
-                {
-                    Log.e(TAG, "could not send the message");
-                }
-                else
-                {
-                    Log.d(TAG, "Bundle sent, BundleID: " + ret.toString());
-                }
-            } catch (SessionDestroyedException e) {
-                Log.e(TAG, "could not send the message", e);
-            } catch (InterruptedException e) {
-                Log.e(TAG, "could not send the message", e);
-            }
+                // set status report requests for bundle reception
+                //b.set(ProcFlags.REQUEST_REPORT_OF_BUNDLE_RECEPTION, true);
+                
+                // set destination for status reports
+                //b.setReportto(SingletonEndpoint.ME);
+                
+                // generate some payload
+                String payload = content.toString();
+	
+	                try 
+	                {
+	                    // get the DTN session
+	                    Session s = mClient.getSession();
+	                    
+	                    // store the current time
+	                    mStart = System.nanoTime();
+	                    
+	                    // send the bundle
+	                    BundleID ret = s.send(b, payload.getBytes());
+	                    
+	                    if (ret == null)
+	                    {
+	                        Log.e(TAG, "could not send the message");
+	                    }
+	                    else
+	                    {
+	                        Log.d(TAG, "Bundle sent, BundleID: " + ret.toString());
+	                    }
+	                } 
+	                catch (SessionDestroyedException e) 
+	                {
+	                    Log.e(TAG, "could not send the message", e);
+	                } 
+	                catch (InterruptedException e) {
+	                    Log.e(TAG, "could not send the message", e);
+	                }
+        	}
     	}
     	catch(Exception e)
     	{
     		
     	}
+    		
+
     	
     }
 
@@ -245,10 +262,10 @@ public class InfoService extends IntentService {
         else if (PING_INTENT.equals(action))
         {
             // retrieve the ping destination
-            SingletonEndpoint destination = new SingletonEndpoint(intent.getStringExtra("destination"));
+            //SingletonEndpoint destination = new SingletonEndpoint(intent.getStringExtra("destination"));
             
             // send out the ping
-            doPing(destination);
+            doPing();
         }
     }
     
@@ -390,8 +407,10 @@ public class InfoService extends IntentService {
             // payload is received here
         	try
         	{
+        		
         		String payload = new String(data, "UTF-8");
-        		preparePayload(payload);
+        		String[] contentStrings = payload.split("|");
+        		Content contentReceived = new Content(contentStrings[0],new Date(contentStrings[1]),contentStrings[2]);
         		
         	}
         	catch(Exception e)

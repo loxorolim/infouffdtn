@@ -27,6 +27,7 @@
     </intent-filter>
         </activity>
         <activity android:name=".DisplayActivity"></activity>
+        <activity android:name=".ShowContentActivity"></activity>
         
         <service android:name="uff.br.infouffdtn.InfoService" />
         

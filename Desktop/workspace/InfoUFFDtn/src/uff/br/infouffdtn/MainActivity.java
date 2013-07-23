@@ -2,6 +2,7 @@ package uff.br.infouffdtn;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.tubs.ibr.dtn.api.GroupEndpoint;
@@ -181,10 +182,11 @@ public class MainActivity extends Activity
    }
     private void save() throws IOException
     {
-    	Date d = new Date();
-    	Content teste = new Content("Arquivo "+ String.valueOf(n++),"Mensagem 1",d);
-    	Content teste2 = new Content("Arquivo" + String.valueOf(n++),"Mensagem 2",d);
-    	Content teste3 = new Content("Arquivo"+ String.valueOf(n++),"Mensagem 3",d);
+    	Date d = new Date();       
+    	
+    	Content teste = new Content("Arquivo "+ String.valueOf(n++),d,"Mensagem 1 alow alow ! Testando a mensagem 1 é isso ae!");
+    	Content teste2 = new Content("Arquivo" + String.valueOf(n++),d,"Mensagem 2 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHEEEEEEE");
+    	Content teste3 = new Content("Arquivo"+ String.valueOf(n++),d,"Mensagem 3 TREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEES");
     	ContentsDatabase.writeTest(teste,this);
     	ContentsDatabase.writeTest(teste2,this);
     	ContentsDatabase.writeTest(teste3,this);

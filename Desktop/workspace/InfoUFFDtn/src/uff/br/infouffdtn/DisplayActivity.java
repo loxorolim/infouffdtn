@@ -7,6 +7,7 @@ import uff.br.infouffdtn.db.ContentsDatabase;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -37,8 +38,13 @@ public class DisplayActivity extends ListActivity
 	  @Override
 	  protected void onListItemClick(ListView l, View v, int position, long id) 
 	  {
-	    String item = (String) getListAdapter().getItem(position);
-	    Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+	    String selectedArchiveName = (String) getListAdapter().getItem(position);
+	    
+	    Intent intent = new Intent(this, ShowContentActivity.class);
+	    intent.putExtra("archiveName", selectedArchiveName);
+    	startActivity(intent);  
+	    
+	    //Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
 	  }
 
 	  

@@ -112,6 +112,62 @@ public class ContentsDatabase
 		return ret;
 		
 	}
+	public static String readArchiveContentPayload(String ArchiveName, Context ctx)
+	{
+			String ret = "";
+	        try 
+	        {	        	
+	        	for(int i = 0; i< avaiableArchivesNumbers.length;i++)
+	        	{	        		
+	        		if(avaiableArchivesNumbers[i] && getArchiveName(i,ctx).equals(ArchiveName))
+	        		{
+		        		try
+		        		{
+		        			FileInputStream fIn = ctx.openFileInput (String.valueOf(i));
+				            InputStreamReader isr = new InputStreamReader(fIn) ;
+				            BufferedReader buffreader = new BufferedReader(isr) ;
+			        		buffreader.readLine();	
+			        		buffreader.readLine();	
+			        		ret = buffreader.readLine();	
+			 	            isr.close();			 	           
+		        		}
+		        		catch(Exception e)
+		        		{
+		        			
+		        		}	
+	        		}
+	        	}
+	        	
+	                        
+	        } 
+	        catch (Exception e ) 
+	        {
+	            
+	        }
+		return ret;
+		
+	}
+	public static String getArchiveName(int pos, Context ctx)
+	{
+		String ret = "";		
+		try 
+		{
+			FileInputStream fIn;
+			fIn = ctx.openFileInput (String.valueOf(pos));
+			InputStreamReader isr = new InputStreamReader(fIn) ;
+	        BufferedReader buffreader = new BufferedReader(isr) ;
+			ret = buffreader.readLine();	
+	        isr.close();
+		} 
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+		
+		return ret;
+	}
 	public static void deleteAllArchives(Context ctx)
 	{
 		File dir = ctx.getFilesDir();
