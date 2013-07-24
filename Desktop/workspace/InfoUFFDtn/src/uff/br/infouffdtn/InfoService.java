@@ -1,9 +1,12 @@
 package uff.br.infouffdtn;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import uff.br.infouffdtn.db.Content;
+import uff.br.infouffdtn.db.ContentsDatabase;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -149,7 +152,10 @@ public class InfoService extends IntentService {
     private void doPing() {
         
     	//criando um content teste
-    	Date d = new Date();
+    	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    	Date date = new Date();
+    	String d = dateFormat.format(date);  
+    	
     	Content content = new Content("A", d, "Olá, estou enviando um content dentro do payload!");
     	try
     	{
@@ -226,7 +232,7 @@ public class InfoService extends IntentService {
             try {
                 // We loop here until no more bundles are available
                 // (queryNext() returns false)
-            	preparePayload("teste");
+//            	preparePayload("teste");
                 while (mClient.getSession().queryNext())
                 {
                 	String x = " ";
@@ -407,10 +413,11 @@ public class InfoService extends IntentService {
             // payload is received here
         	try
         	{
-        		
+
         		String payload = new String(data, "UTF-8");
-        		String[] contentStrings = payload.split("|");
-        		Content contentReceived = new Content(contentStrings[0],new Date(contentStrings[1]),contentStrings[2]);
+        		String[] contentStrings = payload.split(";");     		
+        		Content contentReceived = new Content(contentStrings[0],contentStrings[1],contentStrings[2]);
+        		ContentsDatabase.writeTest(contentReceived,InfoService.this);
         		
         	}
         	catch(Exception e)

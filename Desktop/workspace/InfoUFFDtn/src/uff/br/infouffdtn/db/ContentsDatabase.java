@@ -22,7 +22,8 @@ public class ContentsDatabase
     private static boolean[] avaiableArchivesNumbers = new boolean[30];
 	//PRECISA SALVAR ESTE VETOR EM UM ARQUIVO PARA NAO PERDER OS DADOS QUANDO RESETAR O CELULAR!!!!!!!
 	public static void writeTest(Content content,Context ctx) throws IOException
-	{
+	{ 
+		 loadAvaiableArchiveNumbers(ctx);
 		 try 
 		 {			   
 		
@@ -38,8 +39,10 @@ public class ContentsDatabase
 		            bwriter.newLine();
 		            bwriter.write (content.getPayload());	            
 		            avaiableArchivesNumbers[archiveLocation] = true;
+		            saveAvaiableArchiveNumbers(ctx);
 		            bwriter.flush();
 		            bwriter.close();
+		            
 				}
 	            
 
@@ -54,6 +57,8 @@ public class ContentsDatabase
 	    String datax = "" ;
         try 
         {
+        
+        	loadAvaiableArchiveNumbers(ctx);
             FileInputStream fIn = ctx.openFileInput (archive);
             InputStreamReader isr = new InputStreamReader(fIn) ;
             BufferedReader buffreader = new BufferedReader(isr) ;
@@ -75,7 +80,8 @@ public class ContentsDatabase
 	}
 	public static String[] readAllArchivesNames(Context ctx)
 	{
-		 
+	
+		 loadAvaiableArchiveNumbers(ctx);
 		 LinkedList<String> list = new LinkedList<String>();
 	        try 
 	        {
@@ -112,8 +118,62 @@ public class ContentsDatabase
 		return ret;
 		
 	}
+	public static void saveAvaiableArchiveNumbers(Context ctx)
+	{
+
+		String booleanValues = "";
+		for(int i = 0;i<avaiableArchivesNumbers.length;i++)
+		{
+			booleanValues = booleanValues + String.valueOf(avaiableArchivesNumbers[i]) +";";
+		}		
+		try
+		{
+			FileOutputStream fOut = ctx.openFileOutput("AANArchive",Context.MODE_PRIVATE);	            	            
+			OutputStreamWriter osw = new OutputStreamWriter(fOut);
+			BufferedWriter bwriter = new BufferedWriter(osw);
+			bwriter.write(booleanValues);
+			bwriter.flush();
+            bwriter.close();
+		}
+		catch(Exception e)
+		{
+			
+		}
+			
+	}
+	public static void loadAvaiableArchiveNumbers(Context ctx)
+	{
+		String booleanValues = "" ;
+        try 
+        {
+            FileInputStream fIn = ctx.openFileInput ("AANArchive");
+            InputStreamReader isr = new InputStreamReader(fIn) ;
+            BufferedReader buffreader = new BufferedReader(isr) ;
+            booleanValues = buffreader.readLine() ;
+            isr.close();
+            String[] booleanValuesSplit =  booleanValues.split(";");
+            for(int i = 0;i<booleanValuesSplit.length;i++)
+            {
+            	if(booleanValuesSplit[i].equals("true"))
+            	{
+            		avaiableArchivesNumbers[i] = true;
+            	}
+            	else
+            	{
+            		avaiableArchivesNumbers[i] = false;
+            	}
+            }
+        } 
+        catch (IOException ioe ) 
+        {
+            ioe.printStackTrace();
+        }
+		
+	}
+	
 	public static String readArchiveContentPayload(String ArchiveName, Context ctx)
 	{
+		    loadAvaiableArchiveNumbers(ctx);
 			String ret = "";
 	        try 
 	        {	        	
@@ -170,6 +230,7 @@ public class ContentsDatabase
 	}
 	public static void deleteAllArchives(Context ctx)
 	{
+		loadAvaiableArchiveNumbers(ctx);
 		File dir = ctx.getFilesDir();
 		for(int i = 0; i< avaiableArchivesNumbers.length;i++)
 		{
@@ -180,9 +241,12 @@ public class ContentsDatabase
 				avaiableArchivesNumbers[i] = false;
 			}						
 		}
+		saveAvaiableArchiveNumbers(ctx);
+		
 	}
 	public static int getAvaiableArchiveNumber()
 	{
+		
 		for(int i = 0; i<30;i++)
 		{
 			if(!avaiableArchivesNumbers[i])

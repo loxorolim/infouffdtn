@@ -2,6 +2,7 @@ package uff.br.infouffdtn;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -163,17 +164,17 @@ public class MainActivity extends Activity
         i.setAction(InfoService.PING_INTENT);
         
         //i.putExtra("destination", mTextEid.getText().toString());
-        i.putExtra("destination", "dtn://androidRolim/example-app");
+        //i.putExtra("destination", "dtn://androidRolim/example-app");
         
         //i.putExtra("destination", "dtn://broadcast.dtn/ping/echo");
         
         startService(i);
          i = new Intent(this, InfoService.class);
-        i.setAction(InfoService.PING_INTENT);
+       // i.setAction(InfoService.PING_INTENT);
         
         //i.putExtra("destination", mTextEid.getText().toString());
-        i.putExtra("destination", "dtn://androidRolim");
-        startService(i);
+       // i.putExtra("destination", "dtn://androidRolim");
+     //   startService(i);
     	}
     	catch(Exception e)
     	{
@@ -182,7 +183,9 @@ public class MainActivity extends Activity
    }
     private void save() throws IOException
     {
-    	Date d = new Date();       
+    	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    	Date date = new Date();
+    	String d = dateFormat.format(date);  
     	
     	Content teste = new Content("Arquivo "+ String.valueOf(n++),d,"Mensagem 1 alow alow ! Testando a mensagem 1 é isso ae!");
     	Content teste2 = new Content("Arquivo" + String.valueOf(n++),d,"Mensagem 2 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHEEEEEEE");

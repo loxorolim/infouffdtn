@@ -5,11 +5,11 @@ import java.util.Date;
 public class Content 
 {
 	private String name;
-	private Date date;
+	private String date;
 	private String payload;
 	
 	
-	public Content(String name,Date date, String payload)
+	public Content(String name,String date, String payload)
 	{
 		this.setName(name);
 		this.setDate(date);	
@@ -33,17 +33,17 @@ public class Content
 		this.payload = payload;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	@Override
 	public String toString()
 	{
-		return name + "|" + date + "|" + payload;
+		return name + ";" + date + ";" + payload;
 		
 	}
 
